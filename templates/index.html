@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Barbearia</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <header class="main-header">
+        <h1>Gestão Barbearia</h1>
+    </header>
+
+    <main>
+        <!-- Seção para adicionar serviços -->
+        <section class="form-section">
+            <h2>Adicionar Serviço</h2>
+            <form method="POST" action="/add">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="funcionario">Funcionário:</label>
+                        <select name="funcionario" id="funcionario" required>
+                            <option value="" disabled selected>Selecione um Funcionário</option>
+                            {% for funcionario in funcionarios %}
+                                <option value="{{ funcionario[0] }}">{{ funcionario[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="servico">Serviço:</label>
+                        <select name="servico" id="servico" required>
+                            <option value="" disabled selected>Selecione um Serviço</option>
+                            {% for servico in servicos %}
+                                <option value="{{ servico[0] }}">{{ servico[1] }} - R$ {{ servico[2] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">Registrar Serviço</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Histórico -->
+        <section class="historico-section">
+            <h2>Histórico de Lançamentos</h2>
+            <table id="historicoTabela">
+                <thead>
+                    <tr>
+                        <th>Funcionário</th>
+                        <th>Serviço</th>
+                        <th>Valor</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="historicoTabelaBody">
+                    {% for item in historico %}
+                    <tr>
+                        <td>{{ item[1] }}</td>  <!-- Nome do funcionário -->
+                        <td>{{ item[2] }}</td>  <!-- Descrição do serviço -->
+                        <td>R$ {{ '%.2f' % item[3] }}</td>  <!-- Valor do serviço -->
+                        <td>{{ item[4] }}</td>  <!-- Data do serviço -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Paginação -->
+            <div id="paginationControls">
+                {% if page > 1 %}
+                <a href="javascript:void(0);" onclick="navigatePage({{ page - 1 }})">Anterior</a>
+                {% endif %}
+
+                <span>Página {{ page }} de {{ total_paginas }}</span>
+
+                {% if page < total_paginas %}
+                <a href="javascript:void(0);" onclick="navigatePage({{ page + 1 }})">Próxima</a>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Zerar Histórico -->
+        <section class="reset-section">
+            <form method="POST" action="/reset-historico">
+                <button type="submit" onclick="return confirm('Tem certeza de que deseja zerar o histórico?');">
+                    Zerar Histórico
+                </button>
+            </form>
+        </section>
+
+        <!-- Relatórios -->
+        <section class="relatorios-section">
+            <h2>Relatórios</h2>
+            <a href="/relatorio" class="btn">Relatório de Caixa por Funcionário</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Gestão Barbearia. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Função para carregar o conteúdo do histórico com base na página
+        function loadHistorico(page) {
+            $.ajax({
+                url: '/?page=' + page,  // A URL com o número da página
+                method: 'GET',
+                success: function(response) {
+                    // Atualiza o conteúdo da tabela com os dados da resposta
+                    $('#historicoTabelaBody').html($(response).find('#historicoTabelaBody').html());
+                    $('#paginationControls').html($(response).find('#paginationControls').html());
+                }
+            });
+        }
+
+        // Função para navegação entre as páginas
+        function navigatePage(page) {
+            loadHistorico(page);
+        }
+    </script>
+</body>
+</html>

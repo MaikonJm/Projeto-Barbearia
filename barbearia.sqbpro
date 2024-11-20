@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="barbearia.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1946"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="funcionarios" custom_title="0" dock_id="4" table="4,12:mainfuncionarios"/><dock_state state="000000ff00000000fd0000000100000002000005ab0000038efc0100000003fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000000000000000fb000000160064006f0063006b00420072006f00770073006500320100000000000005ab0000000000000000fb000000160064006f0063006b00420072006f00770073006500340100000000ffffffff0000012400ffffff000005ab0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">SELECT datetime('now', '-3 hours');
+
+SELECT datetime(created_at, '-3 hours') FROM relacoes;
+SELECT datetime(data, '-3 hours') FROM relacoes;
+
+
+PRAGMA table_info(relacoes);
+
+-- Tabela de Funcionários
+CREATE TABLE funcionarios (
+    id_funcionario INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL
+);
+
+INSERT INTO funcionarios (nome) VALUES ('Josias');
+
+SELECT * FROM funcionarios;
+
+-- Tabela de Serviços
+CREATE TABLE servicos (
+    id_servico INTEGER PRIMARY KEY AUTOINCREMENT,
+    descricao TEXT NOT NULL,
+    valor REAL NOT NULL
+);
+
+--RELAÇÕES
+
+DROP TABLE IF EXISTS relacoes;
+
+-- Tabela de Relações (Histórico de Serviços)
+CREATE TABLE relacoes (
+    id_relacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_funcionario INTEGER NOT NULL,
+    id_servico INTEGER NOT NULL,
+    data DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_funcionario) REFERENCES funcionarios (id_funcionario),
+    FOREIGN KEY (id_servico) REFERENCES servicos (id_servico)
+);
+
+-- V2
+CREATE TABLE relacoes (
+    id_relacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_funcionario INTEGER NOT NULL,
+    id_servico INTEGER NOT NULL,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_funcionario) REFERENCES funcionarios (id_funcionario),
+    FOREIGN KEY (id_servico) REFERENCES servicos (id_servico)
+);
+
+DROP TABLE IF EXISTS relacoes;
+
+--V3
+CREATE TABLE relacoes (
+    id_relacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_funcionario INTEGER NOT NULL,
+    id_servico INTEGER NOT NULL,
+    data DATETIME DEFAULT (datetime('now', '-3 hours')),
+    FOREIGN KEY (id_funcionario) REFERENCES funcionarios (id_funcionario),
+    FOREIGN KEY (id_servico) REFERENCES servicos (id_servico)
+);
+
+
+CREATE TABLE IF NOT EXISTS historico (
+    id INTEGER PRIMARY KEY,
+    funcionario_id INTEGER,
+    servico_id INTEGER,
+    data TEXT,
+    FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id),
+    FOREIGN KEY (servico_id) REFERENCES servicos(id)
+);
+
+
+-- Selecionando dados para verificar as inserções
+SELECT * FROM relacoes;
+
+
+SELECT * FROM servicos;
+
+INSERT INTO servicos (descricao, valor) VALUES ('Barba Expressa - Somente alinhamento da Barba', 35.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Barboterapia - Massagem relaxante, Toalha quente e Alinhamento da Barba', 40.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte + Barba + Limpeza Facial', 85.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte + Barba + Selagem - BLACK FRIDAY D''NIEL', 99.99);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte + Barba Expressa', 70.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte + Barboterapia', 75.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte + Máscara Negra - BLACK FRIDAY D\''NIEL', 59.90);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte + Selagem - BLACK FRIDAY D\''NIEL', 75.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Corte Masculino', 40.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Hidratação Masculina - Tratamento com máscara hidratante', 35.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Higienização Completa - Nariz e Orelhas (PROCEDIMENTO COM CERA)', 25.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Higienização Simples - Nariz OU Orelhas (PROCEDIMENTO COM CERA)', 15.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Máscara Negra - Remove cravos e absorve impurezas', 35.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Pigmentação - Válido também para Barba', 25.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Progressiva Masculina - Alisamento dos fios', 60.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Selagem Masculina - Alinha e trata os fios', 50.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Sobrancelha (Designer) - Sobrancelha feita com pinça e cera, adequando sua sobrancelha proporcionalmente ao seu rosto', 40.00);
+INSERT INTO servicos (descricao, valor) VALUES ('Sobrancelha (Navalha) - Procedimento feito com a navalha, retirando os excessos', 15.00);
+
+
+INSERT INTO servicos (descricao, valor) VALUES
+('Acabamento (Pézinho)', 20.00);
+
+
+SELECT name FROM sqlite_master WHERE type='table';
+
+
+DELETE FROM relacoes;
+
+
+
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
